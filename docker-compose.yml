@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  jupyter:
+    # Gunakan Dockerfile untuk membangun image lokal
+    build: .
+    command: >
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser
+                  --LabApp.token=${JUPYTER_TOKEN:-ubah_token_kuat}
+    environment:
+      TZ: "Asia/Jakarta"
+      JUPYTER_TOKEN: "${JUPYTER_TOKEN:-ubah_token_kuat}"
+    volumes:
+      - data:/workspace
+    ports:
+      - "8888:8888"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    shm_size: "4g"
+    restart: unless-stopped
+
+volumes:
+  data: {}
